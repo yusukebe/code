@@ -1,0 +1,8 @@
+{
+  "name": "trie-tree",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "Yusuke Wada <yusuke@kamawada.com> (https://github.com/yusukebe)",
+  "license": "MIT"
+}
