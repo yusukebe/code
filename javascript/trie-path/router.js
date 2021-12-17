@@ -6,7 +6,6 @@ class Router {
     this.tempPath = '/'
   }
 
-  // TODO
   route(path) {
     this.tempPath = path
     return WrappedRouter(this)
