@@ -66,25 +66,49 @@ class Node {
 
   search(method, path) {
     let curNode = this
-    const ps = this.splitPath(path)
-    for (const p of ps) {
+    const params = {}
+    for (const p of this.splitPath(path)) {
       let nextNode = curNode.children[p]
       if (nextNode) {
         curNode = nextNode
-      } else {
-        return this.notFound()
+        continue
+      }
+
+      let isParamMatch = false
+      for (const key in curNode.children) {
+        if (key === '*') {
+          // Wildcard
+          curNode = curNode.children[key]
+          isParamMatch = true
+          break
+        }
+        if (key.match(/^:/)) {
+          const pattern = this.getPattern(key)
+          const match = p.match(new RegExp(pattern))
+          if (match) {
+            const k = this.getParamName(key)
+            params[k] = match[0]
+            curNode = curNode.children[key]
+            isParamMatch = true
+            break
+          }
+          return this.noRoute()
+        }
+      }
+      if (isParamMatch == false) {
+        return this.notRoute()
       }
     }
     let handler = curNode.method[method]
     if (handler) {
-      const res = new Result({ handler: handler })
+      const res = new Result({ handler: handler, params: params })
       return res
     } else {
-      return this.notFound()
+      return this.notRoute()
     }
   }
 
-  notFound() {
+  notRoute() {
     return null
   }
 }
