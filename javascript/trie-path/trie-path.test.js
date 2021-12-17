@@ -64,7 +64,36 @@ describe('Name path', () => {
   })
 })
 
-describe('Wildcard', () => {})
-describe('Regexp', () => {})
+describe('Wildcard', () => {
+  it('/wildcard-abc/xxxxxx/wildcard-efg', () => {
+    node.insert('get', '/wildcard-abc/*/wildcard-efg', 'wildcard')
+    res = node.search('get', '/wildcard-abc/xxxxxx/wildcard-efg')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('wildcard')
+  })
+})
+
+describe('Regexp', () => {
+  node.insert(
+    'get',
+    '/regex-abc/:id{[0-9]+}/comment/:comment_id{[a-z]+}',
+    'regexp'
+  )
+  it('/regexp-abc/123/comment/abc', () => {
+    res = node.search('get', '/regex-abc/123/comment/abc')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('regexp')
+    expect(res.params['id']).toBe('123')
+    expect(res.params['comment_id']).toBe('abc')
+  })
+  it('/regexp-abc/abc', () => {
+    res = node.search('get', '/regex-abc/abc')
+    expect(res).toBeNull()
+  })
+  it('/regexp-abc/123/comment/123', () => {
+    res = node.search('get', '/regex-abc/123/comment/123')
+    expect(res).toBeNull()
+  })
+})
 
 describe('Route chaining', () => {})

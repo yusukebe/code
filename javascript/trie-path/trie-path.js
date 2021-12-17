@@ -73,7 +73,6 @@ class Node {
         curNode = nextNode
         continue
       }
-
       let isParamMatch = false
       for (const key in curNode.children) {
         if (key === '*') {
@@ -96,7 +95,7 @@ class Node {
         }
       }
       if (isParamMatch == false) {
-        return this.notRoute()
+        return this.noRoute()
       }
     }
     let handler = curNode.method[method]
@@ -104,11 +103,11 @@ class Node {
       const res = new Result({ handler: handler, params: params })
       return res
     } else {
-      return this.notRoute()
+      return this.noRoute()
     }
   }
 
-  notRoute() {
+  noRoute() {
     return null
   }
 }
