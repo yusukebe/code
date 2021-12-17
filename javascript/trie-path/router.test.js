@@ -1,5 +1,6 @@
+const { expect } = require('@jest/globals')
 const Router = require('./router')
-const router = Router()
+let router = Router()
 
 describe('Basic Usage', () => {
   it('get, post root', () => {
@@ -46,6 +47,31 @@ describe('Complex', () => {
     res = router.matchRoute('GET', '/post/onetwothree')
     expect(res).toBeNull()
     res = router.matchRoute('GET', '/post/123/123')
+    expect(res).toBeNull()
+  })
+})
+
+describe('Chained Route', () => {
+  it('Return rooter object', () => {
+    router = router.patch('/', 'patch root')
+    expect(router).not.toBeNull()
+    router = router.delete('/', 'delete root')
+    res = router.matchRoute('DELETE', '/')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('delete root')
+  })
+  it('Chain with route method', () => {
+    router.route('/api/book').get('get book').post('post book').put('put book')
+    res = router.matchRoute('GET', '/api/book')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('get book')
+    res = router.matchRoute('POST', '/api/book')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('post book')
+    res = router.matchRoute('PUT', '/api/book')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('put book')
+    res = router.matchRoute('DELETE', '/api/book')
     expect(res).toBeNull()
   })
 })

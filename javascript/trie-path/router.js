@@ -3,10 +3,14 @@ const Node = require('./trie-path')
 class Router {
   constructor() {
     this.node = new Node()
+    this.tempPath = '/'
   }
 
   // TODO
-  route() {}
+  route(path) {
+    this.tempPath = path
+    return WrappedRouter(this)
+  }
 
   addRoute(method, path, handler) {
     this.node.insert(method, path, handler)
@@ -27,6 +31,9 @@ const proxyHandler = {
       if (target.constructor.prototype.hasOwnProperty(prop)) {
         return target[prop](...args)
       } else {
+        if (args.length === 1) {
+          return target.addRoute(prop, target.tempPath, ...args)
+        }
         return target.addRoute(prop, ...args)
       }
     },
