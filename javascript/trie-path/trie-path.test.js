@@ -32,21 +32,35 @@ describe('Basic Usage', () => {
     expect(node.search('post', '/hello/foo')).toBeNull()
     expect(node.search('get', '/hello/bar')).toBeNull()
   })
+  it('/hello/foo/bar', () => {
+    expect(node.search('get', '/hello/foo/bar')).toBeNull()
+  })
 })
 
 describe('Name path', () => {
-  node.insert('get', '/entry/:id', 'get entry')
-
   it('get /entry/123', () => {
+    node.insert('get', '/entry/:id', 'get entry')
     let res = node.search('get', '/entry/123')
+    expect(res).not.toBeNull()
     expect(res.handler).toBe('get entry')
     expect(res.params).not.toBeNull()
     expect(res.params['id']).toBe('123')
+    expect(res.params['id']).not.toBe('1234')
   })
 
   it('get /entry/456/comment', () => {
+    node.insert('get', '/entry/:id', 'get entry')
     res = node.search('get', '/entry/456/comment')
     expect(res).toBeNull()
+  })
+
+  it('get /entry/789/comment/123', () => {
+    node.insert('get', '/entry/:id/comment/:comment_id', 'get comment')
+    res = node.search('get', '/entry/789/comment/123')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('get comment')
+    expect(res.params['id']).toBe('789')
+    expect(res.params['comment_id']).toBe('123')
   })
 })
 
