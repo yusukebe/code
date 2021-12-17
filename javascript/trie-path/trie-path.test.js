@@ -1,4 +1,5 @@
-const node = require('./trie-path')
+const Node = require('./trie-path')
+const node = new Node()
 
 describe('Util Methods', () => {
   it('node.splitPath', () => {
@@ -96,4 +97,14 @@ describe('Regexp', () => {
   })
 })
 
-describe('Route chaining', () => {})
+describe('All', () => {
+  node.insert('all', '/all-methods', 'all methods')
+  it('/all-methods', () => {
+    res = node.search('get', '/all-methods')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('all methods')
+    res = node.search('put', '/all-methods')
+    expect(res).not.toBeNull()
+    expect(res.handler).toBe('all methods')
+  })
+})

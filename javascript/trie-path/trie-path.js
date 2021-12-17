@@ -1,3 +1,5 @@
+const methodNameOfAll = 'all'
+
 class Result {
   constructor({ handler, params } = {}) {
     this.handler = handler
@@ -98,7 +100,9 @@ class Node {
         return this.noRoute()
       }
     }
-    let handler = curNode.method[method]
+
+    let handler = curNode.method[methodNameOfAll] || curNode.method[method]
+
     if (handler) {
       const res = new Result({ handler: handler, params: params })
       return res
@@ -112,5 +116,4 @@ class Node {
   }
 }
 
-const node = new Node()
-module.exports = node
+module.exports = Node
