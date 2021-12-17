@@ -1,4 +1,3 @@
-const { expect } = require('@jest/globals')
 const Router = require('./router')
 const router = Router()
 
