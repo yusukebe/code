@@ -1,3 +1,10 @@
+class Result {
+  constructor({ handler, params } = {}) {
+    this.handler = handler
+    this.params = params || {}
+  }
+}
+
 class Node {
   constructor({ method, label, handler, children } = {}) {
     this.label = label || '/'
@@ -31,13 +38,30 @@ class Node {
   }
 
   splitPath(path) {
-    let ps = []
+    let ps = ['/']
     for (const p of path.split('/')) {
       if (p) {
         ps.push(p)
       }
     }
     return ps
+  }
+
+  getPattern(label) {
+    // :id{[0-9]+}  → [0-9]+$
+    // :id          → (.+)
+    const match = label.match(/^\:.+?\{(.+)\}$/)
+    if (match) {
+      return '(' + match[1] + ')'
+    }
+    return '(.+)'
+  }
+
+  getParamName(label) {
+    const match = label.match(/^\:([^\{\}]+)/)
+    if (match) {
+      return match[1]
+    }
   }
 
   search(method, path) {
@@ -53,7 +77,8 @@ class Node {
     }
     let handler = curNode.method[method]
     if (handler) {
-      return handler
+      const res = new Result({ handler: handler })
+      return res
     } else {
       return this.notFound()
     }
